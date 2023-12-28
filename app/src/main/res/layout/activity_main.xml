@@ -12,8 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:itemBackground="@drawable/ic_launcher_background"
-        app:labelVisibilityMode="labeled"
+        app:itemIconTint="@drawable/menu_selector_color"
+        app:itemBackground="@drawable/background"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/menu_bottom"/>
 
 </FrameLayout>

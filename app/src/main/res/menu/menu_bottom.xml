@@ -3,22 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/tab_call"
+        android:id="@+id/tab_phonebook"
         android:enabled="true"
-        android:icon="@android:drawable/ic_menu_call"
-        android:title="전화"
+        android:icon="@drawable/ic_phonebook"
+        android:title="PhoneBook"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/tab_message"
+        android:id="@+id/tab_gallery"
         android:enabled="true"
-        android:icon="@android:drawable/ic_dialog_email"
-        android:title="메세지"
+        android:icon="@drawable/ic_gallery"
+        android:title="Gallery"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/tab_camera"
+        android:id="@+id/tab_calendar"
         android:enabled="true"
-        android:icon="@android:drawable/ic_menu_camera"
-        android:title="카메라"
+        android:icon="@drawable/ic_calendar"
+        android:title="Calendar"
         app:showAsAction="ifRoom"/>
 
 </menu>
