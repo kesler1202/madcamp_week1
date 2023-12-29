@@ -9,7 +9,10 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-public class Calendar extends Fragment {
+import java.time.DayOfWeek;
+import java.util.Calendar;
+
+public class Calendar_Frag extends Fragment {
 
     private MaterialCalendarView materialCalendarView;
 
@@ -22,7 +25,6 @@ public class Calendar extends Fragment {
         // Select today's date by default
         CalendarDay today = CalendarDay.today();
         materialCalendarView.setSelectedDate(today);
-
         return view;
     }
 }
