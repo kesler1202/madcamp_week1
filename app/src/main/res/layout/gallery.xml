@@ -69,7 +69,7 @@
                     android:layout_height="431dp"
                     android:gravity="center"
                     android:horizontalSpacing="16dp"
-                    android:numColumns="2"
+                    android:numColumns="3"
                     android:padding="16dp"
                     android:stretchMode="columnWidth"
                     android:verticalSpacing="16dp" />
