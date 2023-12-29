@@ -13,7 +13,7 @@
         android:layout_height="60dp"
         android:layout_gravity="bottom"
         app:itemIconTint="@drawable/menu_selector_color"
-        app:itemBackground="@drawable/background"
+        app:backgroundTint="@color/bottom_nav_background"
         app:labelVisibilityMode="unlabeled"
         app:menu="@menu/menu_bottom"/>
 

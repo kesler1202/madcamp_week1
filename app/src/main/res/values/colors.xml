@@ -3,4 +3,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="bottom_nav_background">#30444E</color>
+    <color name="tab_color">#22343C</color>
 </resources>
