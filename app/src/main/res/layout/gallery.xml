@@ -66,16 +66,19 @@
                 <GridView
                     android:id="@+id/feed_gallery_view"
                     android:layout_width="match_parent"
-                    android:layout_height="517dp"
-                    android:horizontalSpacing="7dp"
+                    android:layout_height="431dp"
+                    android:gravity="center"
+                    android:horizontalSpacing="16dp"
                     android:numColumns="3"
-                    android:verticalSpacing="7dp" />
+                    android:padding="16dp"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="16dp" />
 
                 <!-- 이미지 추가 버튼 -->
                 <ImageButton
                     android:id="@+id/btn_add_pic"
                     android:layout_width="388dp"
-                    android:layout_height="61dp"
+                    android:layout_height="65dp"
                     android:layout_gravity="end"
                     android:contentDescription="Add Picture"
                     android:src="@drawable/plusblack" />
