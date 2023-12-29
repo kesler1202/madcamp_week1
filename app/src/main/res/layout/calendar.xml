@@ -9,6 +9,9 @@
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
         app:mcv_selectionColor="#d2d2d2"
+        app:mcv_dateTextAppearance="@style/CustomCalendarTextAppearance"
+        app:mcv_weekDayTextAppearance="@style/CustomDayLabelTextAppearance"
+        android:background="@color/tab_color"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

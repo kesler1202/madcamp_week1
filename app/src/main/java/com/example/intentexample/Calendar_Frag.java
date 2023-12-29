@@ -20,11 +20,13 @@ public class Calendar_Frag extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.calendar, container, false);
 
-        materialCalendarView = view.findViewById(R.id.calendarView);
+        materialCalendarView = (MaterialCalendarView) view.findViewById(R.id.calendarView);
 
-        // Select today's date by default
-        CalendarDay today = CalendarDay.today();
-        materialCalendarView.setSelectedDate(today);
+        // Set the first day of the week
+        materialCalendarView.state().edit()
+                .setFirstDayOfWeek(Calendar.MONDAY)
+                .commit();
+
         return view;
     }
 }
