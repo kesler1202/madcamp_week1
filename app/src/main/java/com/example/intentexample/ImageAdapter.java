@@ -1,6 +1,7 @@
 package com.example.intentexample;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,22 +11,22 @@ import java.util.ArrayList;
 
 public class ImageAdapter extends BaseAdapter {
 
-    private Context context;
-    private ArrayList<String> imagePaths;
+    private final Context context;
+    private final ArrayList<Bitmap> images; // 변경: Bitmap으로 변경
 
-    public ImageAdapter(Context context, ArrayList<String> imagePaths) {
+    public ImageAdapter(Context context, ArrayList<Bitmap> images) { // 변경: ArrayList<Bitmap>으로 변경
         this.context = context;
-        this.imagePaths = imagePaths;
+        this.images = images;
     }
 
     @Override
     public int getCount() {
-        return imagePaths.size();
+        return images.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return imagePaths.get(position);
+        return images.get(position);
     }
 
     @Override
@@ -36,22 +37,18 @@ public class ImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
+
         if (convertView == null) {
-            // If convertView is null, create a new ImageView
+            // If it's not recycled, initialize some attributes
             imageView = new ImageView(context);
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(200, 200)); // Adjust size as needed
+            imageView.setLayoutParams(new ViewGroup.LayoutParams(200, 200));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         } else {
-            // If convertView is not null, reuse it
             imageView = (ImageView) convertView;
         }
 
-        // Load the image into the ImageView using a library like Picasso or Glide
-        // For simplicity, let's assume the image path is a local path (not recommended for production)
-        String imagePath = imagePaths.get(position);
-        // Load image into imageView using your preferred image loading library (e.g., Picasso, Glide)
-        // For example: Picasso.get().load(imagePath).into(imageView);
-
+        // 변경: 이미지를 Bitmap으로 설정
+        imageView.setImageBitmap(images.get(position));
         return imageView;
     }
 }
