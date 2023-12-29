@@ -23,6 +23,8 @@ public class Calendar_Frag extends Fragment {
         materialCalendarView = (MaterialCalendarView) view.findViewById(R.id.calendarView);
 
         // Set the first day of the week
+        Calendar today = Calendar.getInstance();
+        materialCalendarView.setSelectedDate(today);
         materialCalendarView.state().edit()
                 .setFirstDayOfWeek(Calendar.MONDAY)
                 .commit();

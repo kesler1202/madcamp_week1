@@ -12,4 +12,9 @@
         <!-- You can also customize the text size, style, etc. -->
     </style>
 
+    <style name="CustomTitleTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/white</item>
+        <!-- Customize the text size, style, etc., if desired -->
+    </style>
+
 </resources>

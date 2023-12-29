@@ -1,18 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:gravity="center">
+    android:background="@color/tab_color">
 
+    <!-- Your input box and button -->
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
-        app:mcv_selectionColor="#d2d2d2"
-        app:mcv_dateTextAppearance="@style/CustomCalendarTextAppearance"
-        app:mcv_weekDayTextAppearance="@style/CustomDayLabelTextAppearance"
-        android:background="@color/tab_color"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/bottom_nav_background"
+        app:mcv_dateTextAppearance="@style/CustomCalendarTextAppearance"
+        app:mcv_headerTextAppearance="@style/CustomTitleTextAppearance"
+        app:mcv_selectionColor="@color/bright_green"
+        app:mcv_weekDayTextAppearance="@style/CustomDayLabelTextAppearance"
+        tools:layout_editor_absoluteX="194dp"
+        tools:layout_editor_absoluteY="186dp" />
 
-</LinearLayout>
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="540dp"
+        android:background="@color/tab_color"
+        app:layout_constraintTop_toBottomOf="@id/calendarView"
+        app:layout_constraintBottom_toTopOf="@id/inputLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Content to be scrolled -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!-- Add your scrollable content here -->
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/inputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/editTextSchedule"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Write a new schedule.."
+            android:textColorHint="@android:color/white"
+            android:drawableEnd="@drawable/ic_add"
+            android:background="@drawable/rounded_edittext_background"
+            android:padding="10dp" /> <!-- Add padding as needed -->
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
