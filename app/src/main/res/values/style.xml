@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Custom Text Appearance for Calendar Dates -->
+    <style name="CustomCalendarTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/white</item>
+        <!-- Add other text attributes like size, style, etc., if needed -->
+    </style>
+
+    <style name="CustomDayLabelTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/white</item>
+        <!-- You can also customize the text size, style, etc. -->
+    </style>
+
+</resources>
