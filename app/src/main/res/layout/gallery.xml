@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
         <!-- 상단 프로필 부분 -->
         <LinearLayout
@@ -50,39 +46,34 @@
         </LinearLayout>
 
         <!-- 갤러리 부분 -->
-        <androidx.core.widget.NestedScrollView
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/tab_color"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <GridView
+            android:id="@+id/feed_gallery_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_height="423dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:horizontalSpacing="16dp"
+            android:numColumns="3"
+            android:padding="16dp"
+            android:verticalSpacing="16dp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/tab_color"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-                <GridView
-                    android:id="@+id/feed_gallery_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="431dp"
-                    android:gravity="center"
-                    android:horizontalSpacing="16dp"
-                    android:numColumns="3"
-                    android:padding="16dp"
-                    android:stretchMode="columnWidth"
-                    android:verticalSpacing="16dp" />
-
-                <!-- 이미지 추가 버튼 -->
-                <ImageButton
-                    android:id="@+id/btn_add_pic"
-                    android:layout_width="388dp"
-                    android:layout_height="65dp"
-                    android:layout_gravity="end"
-                    android:contentDescription="Add Picture"
-                    android:src="@drawable/plusblack" />
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+        <!-- 이미지 추가 버튼 -->
+        <ImageButton
+            android:id="@+id/btn_add_pic"
+            android:layout_width="388dp"
+            android:layout_height="71dp"
+            android:layout_gravity="end"
+            android:contentDescription="Add Picture"
+            android:src="@drawable/plusblack" />
     </LinearLayout>
-</ScrollView>
+</LinearLayout>
