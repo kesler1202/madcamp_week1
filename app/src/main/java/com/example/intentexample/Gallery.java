@@ -40,11 +40,8 @@ public class Gallery extends Fragment {
                             if (result != null) {
                                 selectedImage = result;
 
-                                // 이미지뷰에 이미지 불러오기
-                                ImageView imageView = requireView().findViewById(R.id.feed_profile_img);
                                 try {
                                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImage);
-                                    imageView.setImageBitmap(bitmap);
 
                                     // 변경: 비트맵 리스트에 추가
                                     images.add(bitmap);
@@ -59,14 +56,38 @@ public class Gallery extends Fragment {
                         }
                     });
 
+    // 변경: Fragment 상태 저장 및 복원
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.gallery, container, false);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("images", images);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            // 복원된 상태에서 이미지 로드
+            images = savedInstanceState.getParcelableArrayList("images");
+            imageAdapter = new ImageAdapter(requireContext(), images);
+            GridView gridView = requireView().findViewById(R.id.feed_gallery_view);
+            gridView.setAdapter(imageAdapter);
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         // Initialize the images list and the ImageAdapter
         images = new ArrayList<>();
         imageAdapter = new ImageAdapter(requireContext(), images);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.gallery, container, false);
 
         // Set up the GridView
         GridView gridView = view.findViewById(R.id.feed_gallery_view);
