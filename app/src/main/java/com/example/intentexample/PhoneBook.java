@@ -3,6 +3,7 @@ package com.example.intentexample;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -20,8 +21,12 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -86,6 +91,14 @@ public class PhoneBook extends Fragment {
                         .replace(R.id.container, myProfileFragment)
                         .addToBackStack(null)
                         .commit();
+            }
+        });
+
+        ImageButton addProfileButton = view.findViewById(R.id.AddProfile);
+        addProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startQRScanner();
             }
         });
 
@@ -248,5 +261,29 @@ public class PhoneBook extends Fragment {
             ex.printStackTrace();
         }
         return contacts;
+    }
+
+    public void startQRScanner() {
+        IntentIntegrator integrator = new IntentIntegrator(getActivity());
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+        integrator.setPrompt("Scan a QR code");
+        integrator.setCameraId(0);  // Use a specific camera of the device
+        integrator.setBeepEnabled(false);
+        integrator.setBarcodeImageEnabled(true);
+        integrator.initiateScan();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                // Handle the scanned data (result.getContents())
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }
