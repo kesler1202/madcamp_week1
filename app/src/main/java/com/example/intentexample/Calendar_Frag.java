@@ -64,17 +64,17 @@ public class Calendar_Frag extends Fragment {
                     plans.add(planText);
                     dateToPlansMap.put(selectedDate, plans);
                     updateScrollViewForDate(selectedDate);
+                    updateCalendarWithEvents();
                     editTextSchedule.setText(""); // Clear the input box
                 }
             }
         });
-
+        updateCalendarWithEvents();
         return view;
     }
     private void updateCalendarWithEvents() {
         Set<CalendarDay> datesWithEvents = new HashSet<>();
 
-        // Assuming dateToPlansMap is your map of dates to plans
         for (CalendarDay date : dateToPlansMap.keySet()) {
             if (!dateToPlansMap.get(date).isEmpty()) {
                 datesWithEvents.add(date);
@@ -83,6 +83,16 @@ public class Calendar_Frag extends Fragment {
 
         EventDecorator decorator = new EventDecorator(datesWithEvents);
         materialCalendarView.addDecorator(decorator);
+    }
+    public void onResume() {
+        super.onResume();
+        if (materialCalendarView != null) {
+            updateCalendarWithEvents();
+            CalendarDay selectedDate = materialCalendarView.getSelectedDate();
+            if (selectedDate != null) {
+                updateScrollViewForDate(selectedDate);
+            }
+        }
     }
     private void updateScrollViewForDate(CalendarDay date) {
         scrollViewLayout.removeAllViews();
