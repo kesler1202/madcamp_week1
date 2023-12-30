@@ -29,10 +29,18 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    sourceSets {
+        getByName("main") {
+            assets {
+                srcDirs("src\\main\\assets", "src\\main\\assets")
+            }
+        }
+    }
 }
 
 dependencies {
 
+    implementation("com.google.code.gson:gson:2.8.6")
     implementation("androidx.constraintlayout:constraintlayout:<latest_version>")
     implementation("com.prolificinteractive:material-calendarview:1.4.3")
     implementation("com.jakewharton.threetenabp:threetenabp:1.2.1") 
