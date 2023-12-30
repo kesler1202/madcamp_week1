@@ -1,0 +1,53 @@
+[
+  {"name": "Son",
+    "phoneNumber": "010-1234-5671",
+    "school": "KAIST"},
+
+  {"name": "Hwang",
+    "phoneNumber": "010-1234-1678",
+    "school": "이화여자대학교"},
+
+  {"name": "John",
+    "phoneNumber": "010-1334-5678",
+    "school": "경북대학교"},
+
+  {"name": "Kim",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "A",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "B",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "C",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "D",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "E",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "F",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "G",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "H",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "I",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"}
+]

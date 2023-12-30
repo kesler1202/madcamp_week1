@@ -12,6 +12,7 @@
     <color name="bright_green">#3DD598</color>
     <color name="nav_bar_active">#FFFFFF</color>
     <color name="nav_bar_deactive">#444444</color>
+    <color name="phonebook_search">#1A282F</color>
 
     <color name="darknavy">#22223b</color>
     <color name="lightnavy">#4a4e69</color>
