@@ -4,14 +4,14 @@ public class Contact {
     private String name;
     private String phone;
     private String school;
-    private String memo;
+    private String mail;
 
     // Constructor
-    public Contact(String name, String phone, String school, String memo) {
+    public Contact(String name, String phone, String school, String mail) {
         this.name = name;
         this.phone = phone;
         this.school = school;
-        this.memo = memo;
+        this.mail = mail;
     }
 
     // Getter for name
@@ -44,13 +44,13 @@ public class Contact {
         this.school = school;
     }
 
-    public String getMemo() {
-        return memo;
+    public String getMail() {
+        return mail;
     }
 
     // Setter for school
-    public void setMemo(String memo) {
-        this.memo = memo;
+    public void setMemo(String mail) {
+        this.mail = mail;
     }
 
     @Override

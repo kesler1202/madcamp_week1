@@ -2,65 +2,20 @@
   {"name": "Son",
     "phone": "010-1234-5671",
     "school": "KAIST",
-    "memo":  "He is blah blah. Also, He is blah blah."},
+    "mail":  "kesler@kaist.ac.kr"},
 
   {"name": "Hwang",
     "phone": "010-1234-1678",
     "school": "이화여자대학교",
-    "memo":  "blah"},
+    "mail":  "jryeong@naver.com"},
 
   {"name": "John",
     "phone": "010-1334-5678",
     "school": "경북대학교",
-    "memo":  "blah"},
+    "mail":  "abcxyz@gmail.com"},
 
-  {"name": "Kim",
+  {"name": "Song",
     "phone": "010-1423-5678",
     "school": "부산대학교",
-    "memo":  "blah"},
-
-  {"name": "A",
-    "phone": "010-1423-5678",
-    "school": "부산대학교",
-    "memo":  "blah"},
-
-  {"name": "B",
-    "phone": "010-1423-5678",
-    "school": "부산대학교",
-    "memo":  "blah"},
-
-  {"name": "C",
-    "phone": "010-1423-5678",
-    "school": "부산대학교",
-    "memo":  "blah"},
-
-  {"name": "D",
-    "phone": "010-1423-5678",
-    "school": "부산대학교",
-    "memo":  "blah"},
-
-  {"name": "E",
-    "phone": "010-1423-5678",
-    "school": "부산대학교",
-    "memo":  "blah"},
-
-  {"name": "F",
-    "phone": "010-1423-5678",
-    "school": "부산대학교",
-    "memo":  "blah"},
-
-  {"name": "G",
-    "phone": "010-1423-5678",
-    "school": "부산대학교",
-    "memo":  "blah"},
-
-  {"name": "H",
-    "phone": "010-1423-5678",
-    "school": "부산대학교",
-    "memo":  "blah"},
-
-  {"name": "I",
-    "phone": "010-1423-5678",
-    "school": "부산대학교",
-    "memo":  "blah"}
+    "mail":  "xyzabcxyz@gmail.com"}
 ]

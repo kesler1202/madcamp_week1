@@ -64,6 +64,18 @@
         android:background="@drawable/myprofile_editbox"
         android:inputType="text"/>
 
+    <EditText
+        android:id="@+id/editTextMail"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Mail"
+        android:layout_marginTop="5dp"
+        android:paddingLeft="10dp"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:background="@drawable/myprofile_editbox"
+        android:inputType="text"/>
+
     <Button
         android:id="@+id/buttonSave"
         android:layout_width="wrap_content"
@@ -72,4 +84,11 @@
         android:backgroundTint="@color/bright_green"
         android:layout_gravity="center_horizontal"/>
 
+    <Button
+        android:id="@+id/buttonGenerateQR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Generate QR Code"
+        android:backgroundTint="@color/bright_green"
+        android:layout_gravity="center_horizontal"/>
 </LinearLayout>

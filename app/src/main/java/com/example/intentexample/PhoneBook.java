@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -127,8 +131,8 @@ public class PhoneBook extends Fragment {
         // Create the message showing contact details
         String message = "Name: " + contact.getName() + "\n" +
                 "Phone: " + contact.getPhone() + "\n" +
-                "School: " + contact.getSchool() + "\n\n" +
-                contact.getMemo();
+                "School: " + contact.getSchool() + "\n" +
+                "Mail: " + contact.getMail();
         builder.setMessage(message);
 
         // Modify button
@@ -213,7 +217,7 @@ public class PhoneBook extends Fragment {
 
     private ArrayList<Contact> loadContacts() {
         ArrayList<Contact> contacts;
-        File file = new File(getContext().getFilesDir(), "Profile_Internal.json");
+            File file = new File(getContext().getFilesDir(), "Profile_Internal.json");
         if (file.exists()) {
             // Load from internal storage
             contacts = loadContactsFromInternalStorage();
@@ -278,12 +282,38 @@ public class PhoneBook extends Fragment {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
+                Log.d("PhoneBook", "QR Scan cancelled");
                 Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-                // Handle the scanned data (result.getContents())
+                Log.d("PhoneBook", "QR Scan result: " + result.getContents());
+                addContactFromQRCode(result.getContents());
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+    private void addContactFromQRCode(String jsonData) {
+        try {
+            Log.d("PhoneBook", "QR Data: " + jsonData);
+
+            Gson gson = new Gson();
+            Contact newContact = gson.fromJson(jsonData, Contact.class);
+
+            if (newContact != null) {
+                contactList.add(newContact);
+                originalContactList.add(newContact);
+
+                adapter.notifyDataSetChanged();
+                saveJsonToStorage(gson.toJson(contactList));
+
+                Toast.makeText(getActivity(), "Added Successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.d("PhoneBook", "Parsed contact is null.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("PhoneBook", "Error parsing QR Data", e);
+            Toast.makeText(getActivity(), "Error adding contact from QR code", Toast.LENGTH_SHORT).show();
         }
     }
 }
