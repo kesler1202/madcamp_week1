@@ -29,7 +29,8 @@ public class PhoneBook extends Fragment {
         View view = inflater.inflate(R.layout.phonebook, container, false);
         listView = view.findViewById(R.id.listView);
         contactList = loadContacts();
-        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, contactList);
+
+        adapter = new ArrayAdapter<Contact>(getContext(), R.layout.list_item, R.id.textViewItem, contactList);
         listView.setAdapter(adapter);
         return view;
     }

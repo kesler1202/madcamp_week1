@@ -13,5 +13,41 @@
 
   {"name": "Kim",
     "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "A",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "B",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "C",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "D",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "E",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "F",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "G",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "H",
+    "phoneNumber": "010-1423-5678",
+    "school": "부산대학교"},
+
+  {"name": "I",
+    "phoneNumber": "010-1423-5678",
     "school": "부산대학교"}
 ]

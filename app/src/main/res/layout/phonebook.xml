@@ -5,21 +5,39 @@
     android:orientation="vertical"
     android:background="@color/tab_color">
 
-    <ImageButton
-        android:id="@+id/MyProfile"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_myprofile"
-        android:background="@android:color/transparent"
+        android:orientation="horizontal"
         android:layout_gravity="end"
-        android:layout_margin="10dp"/>
+        android:layout_marginTop="10dp">
 
-    <!-- Horizontal LinearLayout for Search Box and ImageButton -->
+        <!-- ImageButton for MyProfile -->
+        <ImageButton
+            android:id="@+id/MyProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_myprofile"
+            android:background="@android:color/transparent"
+            android:layout_marginEnd="0dp"/>
+
+        <!-- ImageButton for AddProfile -->
+        <ImageButton
+            android:id="@+id/AddProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_addcontact"
+            android:background="@android:color/transparent"
+            android:layout_marginEnd="10dp"/>
+
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:layout_marginTop="6dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp">
 
@@ -36,14 +54,13 @@
             android:inputType="text"
             android:layout_marginEnd="8dp"/>
 
-        <!-- ImageButton with Search Icon and Black Background -->
         <ImageButton
             android:id="@+id/searchButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_search"
-            android:background="@color/transparent"
-            android:padding="10dp"/>
+            android:background="@color/bright_green"
+            android:padding="9dp"/>
     </LinearLayout>
 
     <!-- ListView -->
@@ -52,5 +69,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:layout_marginBottom="60dp"
         android:background="@color/tab_color"/>
 </LinearLayout>
