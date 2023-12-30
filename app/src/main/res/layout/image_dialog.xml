@@ -51,7 +51,7 @@
         <!-- 메모 입력 창 -->
         <EditText
             android:id="@+id/editTextSchedule"
-            android:layout_width="544dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/rounded_edittext_background"
@@ -70,5 +70,6 @@
 
     </LinearLayout>
 </LinearLayout>
+
 
 

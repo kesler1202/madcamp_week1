@@ -1,12 +1,19 @@
 package com.example.intentexample;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +31,7 @@ public class ImageDialogFragment extends DialogFragment {
 
     // 추가된 부분: newInstance 메서드와 TAG 상수 정의
     public static final String TAG = "ImageDialogFragment";
+
 
     public static ImageDialogFragment newInstance(int position, ArrayList<Bitmap> images) {
         ImageDialogFragment fragment = new ImageDialogFragment();
@@ -54,10 +62,22 @@ public class ImageDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         ImageView dialogImageView = view.findViewById(R.id.dialog_image_view);
+        LinearLayout layoutComments = view.findViewById(R.id.layoutComments);
+        EditText editTextSchedule = view.findViewById(R.id.editTextSchedule);
+        ImageButton addButton = view.findViewById(R.id.addButton);
 
-        // 다이얼로그에 선택된 이미지 설정
+        // 이미지 목록을 프래그먼트에 전달
         Bitmap clickedImage = images.get(position);
         dialogImageView.setImageBitmap(clickedImage);
+
+        addButton.setOnClickListener(v -> {
+            // + 버튼 클릭 시 동적으로 메모 추가
+            String commentText = editTextSchedule.getText().toString();
+            if (!commentText.isEmpty()) {
+                addComment(layoutComments, commentText);
+                editTextSchedule.setText(""); // 입력창 초기화
+            }
+        });
 
         // 페이드인 애니메이션 적용
         AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
@@ -79,18 +99,38 @@ public class ImageDialogFragment extends DialogFragment {
         });
     }
 
+    // 메모를 동적으로 추가하는 함수
+    private void addComment(LinearLayout layoutComments, String commentText) {
+        TextView commentTextView = new TextView(requireContext());
+        commentTextView.setText(commentText);
+        commentTextView.setTextColor(Color.WHITE);
+
+        // 추가된 메모의 레이아웃 설정
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 0, 0, 16); // 메모 간 간격 조절
+        commentTextView.setLayoutParams(params);
+
+        // 메모를 레이아웃에 추가
+        layoutComments.addView(commentTextView);
+    }
+
     // SimpleAnimationListener class to override only onAnimationEnd
-    private static class SimpleAnimationListener implements android.view.animation.Animation.AnimationListener {
+    private static abstract class SimpleAnimationListener implements Animation.AnimationListener {
         @Override
-        public void onAnimationStart(android.view.animation.Animation animation) {
+        public void onAnimationStart(Animation animation) {
         }
 
         @Override
-        public void onAnimationEnd(android.view.animation.Animation animation) {
+        public void onAnimationEnd(Animation animation) {
         }
 
         @Override
-        public void onAnimationRepeat(android.view.animation.Animation animation) {
+        public void onAnimationRepeat(Animation animation) {
         }
+
+
     }
 }
