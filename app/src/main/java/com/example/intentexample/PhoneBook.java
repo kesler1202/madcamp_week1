@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -74,6 +75,20 @@ public class PhoneBook extends Fragment {
                 // Not used
             }
         });
+
+        ImageButton myProfileButton = view.findViewById(R.id.MyProfile);
+        myProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Code to open the new fragment
+                MyProfileFragment myProfileFragment = new MyProfileFragment();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, myProfileFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
         return view;
     }
 

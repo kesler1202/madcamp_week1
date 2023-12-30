@@ -1,0 +1,67 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/tab_color"
+    android:gravity="center_horizontal">
+
+    <!-- ImageView for the profile photo, centered -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageProfile"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_ownprofile"
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp"/>
+
+    <!-- Button for uploading photo, placed above the text boxes -->
+    <Button
+        android:id="@+id/buttonUploadPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upload Photo"
+        android:backgroundTint="@color/bright_green"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- EditText for Name -->
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Name"
+        android:paddingLeft="10dp"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:background="@drawable/myprofile_editbox"
+        android:inputType="textPersonName"/>
+
+    <!-- EditText for Phone -->
+    <EditText
+        android:id="@+id/editTextPhone"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="5dp"
+        android:hint="Phone"
+        android:paddingLeft="10dp"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:background="@drawable/myprofile_editbox"
+        android:inputType="phone"/>
+
+    <!-- EditText for School -->
+    <EditText
+        android:id="@+id/editTextSchool"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="School"
+        android:layout_marginTop="5dp"
+        android:paddingLeft="10dp"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:background="@drawable/myprofile_editbox"
+        android:inputType="text"/>
+
+</LinearLayout>

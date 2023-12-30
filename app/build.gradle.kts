@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-
+    implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("androidx.constraintlayout:constraintlayout:<latest_version>")
     implementation("com.prolificinteractive:material-calendarview:1.4.3")
