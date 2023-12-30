@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Gallery extends Fragment {
 
@@ -83,38 +84,11 @@ public class Gallery extends Fragment {
                     });
 
     private void showImageDialog(int position) {
-        Dialog dialog = new Dialog(requireContext());
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        dialog.setContentView(R.layout.image_dialog);
-
-        ImageView dialogImageView = dialog.findViewById(R.id.dialog_image_view);
-
-        // Set the clicked image in the dialog
-        Bitmap clickedImage = viewModel.getImages().get(position);
-        dialogImageView.setImageBitmap(clickedImage);
-
-        // Apply fadein animation
-        AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
-        fadeIn.setDuration(500);
-        dialogImageView.startAnimation(fadeIn);
-
-        dialog.show();
-
-        // Close the dialog with fadeout animation when clicked
-        dialogImageView.setOnClickListener(v -> {
-            AlphaAnimation fadeOut = new AlphaAnimation(1.0f, 0.0f);
-            fadeOut.setDuration(500);
-            dialogImageView.startAnimation(fadeOut);
-
-            fadeOut.setAnimationListener(new SimpleAnimationListener() {
-                @Override
-                public void onAnimationEnd(android.view.animation.Animation animation) {
-                    dialog.dismiss();
-                }
-            });
-        });
+        // 이미지 목록을 프래그먼트에 전달
+        ImageDialogFragment.newInstance(position, new ArrayList<>(viewModel.getImages()))
+                .show(getChildFragmentManager(), ImageDialogFragment.TAG);
     }
+
 
     // SimpleAnimationListener class to override only onAnimationEnd
     private static class SimpleAnimationListener implements android.view.animation.Animation.AnimationListener {

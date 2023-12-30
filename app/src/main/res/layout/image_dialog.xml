@@ -1,13 +1,74 @@
-<!-- image_dialog.xml -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/tab_color">
 
-    <ImageView
-        android:id="@+id/dialog_image_view"
+    <!-- 상단 이미지 부분 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_launcher_foreground" />
+        android:layout_height="wrap_content"
+        android:background="@color/tab_color"
+        android:gravity="center"
+        android:orientation="vertical">
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/dialog_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="354dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_launcher_foreground" />
+
+    </LinearLayout>
+
+    <!-- 중간 부분: 스크롤이 가능한 레이아웃 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/layoutComments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 여기에 동적으로 추가되는 메모가 들어갈 예정 -->
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 하단 메모 입력 창과 + 버튼 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/tab_color"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- 메모 입력 창 -->
+        <EditText
+            android:id="@+id/editTextSchedule"
+            android:layout_width="544dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_edittext_background"
+            android:hint="Write a comment..."
+            android:padding="10dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white" />
+
+        <ImageButton
+            android:id="@+id/addButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/tab_color"
+            android:padding="10dp"
+            android:src="@drawable/ic_add" />
+
+    </LinearLayout>
+</LinearLayout>
+
+
