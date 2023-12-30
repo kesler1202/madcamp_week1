@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,12 +33,29 @@ public class Gallery extends Fragment {
     private Uri selectedImage;
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("YourFragment", "onResume called");
+        // onResume에서 이미지를 초기화하고 업데이트
+        if (imageAdapter == null) {
+            imageAdapter = new ImageAdapter(requireContext(), viewModel.getImages());
+            GridView gridView = requireView().findViewById(R.id.feed_gallery_view);
+            gridView.setAdapter(imageAdapter);
+        } else {
+            // 이미 어댑터가 생성되었으면 이미지 데이터만 업데이트
+            imageAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(GalleryViewModel.class);
     }
 
-    @Override
+
+    private ActivityResultLauncher<String> pickImageLauncher;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.gallery, container, false);
@@ -50,7 +68,6 @@ public class Gallery extends Fragment {
 
         // Set up item click listener
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
-            // 변경: 이미지를 클릭할 때의 동작
             Bitmap clickedImage = viewModel.getImages().get(position);
             Toast.makeText(requireContext(), "Clicked: " + clickedImage, Toast.LENGTH_SHORT).show();
             showImageDialog(position);
@@ -59,29 +76,32 @@ public class Gallery extends Fragment {
         ImageButton btnAddPic = view.findViewById(R.id.btn_add_pic);
         btnAddPic.setOnClickListener(v -> openImagePicker());
 
+        // 이미지 피커 런처 등록
+        registerImagePickerLauncher();
+
         return view;
+    }
+    private void registerImagePickerLauncher() {
+        pickImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
+            if (result != null) {
+                selectedImage = result;
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImage);
+                    viewModel.addImage(bitmap);
+                    imageAdapter.notifyDataSetChanged();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(requireContext(), "사진 업로드 실패", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void openImagePicker() {
         pickImageLauncher.launch("image/*");
     }
 
-    private final ActivityResultLauncher<String> pickImageLauncher =
-            registerForActivityResult(new ActivityResultContracts.GetContent(),
-                    result -> {
-                        if (result != null) {
-                            selectedImage = result;
-                            try {
-                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImage);
-                                viewModel.addImage(bitmap);
-                                imageAdapter.notifyDataSetChanged();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            Toast.makeText(requireContext(), "사진 업로드 실패", Toast.LENGTH_LONG).show();
-                        }
-                    });
 
     private void showImageDialog(int position) {
         // 이미지 목록을 프래그먼트에 전달

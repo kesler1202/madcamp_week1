@@ -63,10 +63,10 @@
             android:layout_height="423dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:horizontalSpacing="16dp"
-            android:numColumns="3"
+            android:horizontalSpacing="5dp"
+            android:numColumns="2"
             android:padding="16dp"
-            android:verticalSpacing="16dp" />
+            android:verticalSpacing="5dp" />
 
         <!-- 이미지 추가 버튼 -->
         <ImageButton
