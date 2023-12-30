@@ -52,6 +52,7 @@ public class PhoneBook extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("PhoneBook", "onCreateView called");
         View view = inflater.inflate(R.layout.phonebook, container, false);
         listView = view.findViewById(R.id.listView);
         contactList = loadContacts();
@@ -268,17 +269,20 @@ public class PhoneBook extends Fragment {
     }
 
     public void startQRScanner() {
-        IntentIntegrator integrator = new IntentIntegrator(getActivity());
+        Log.d("PhoneBook", "startQRScanner called");
+        IntentIntegrator integrator = new IntentIntegrator(getActivity()).forSupportFragment(this);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
         integrator.setPrompt("Scan a QR code");
         integrator.setCameraId(0);  // Use a specific camera of the device
         integrator.setBeepEnabled(false);
         integrator.setBarcodeImageEnabled(true);
+        Log.d("PhoneBook", "Initiating scan");
         integrator.initiateScan();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("PhoneBook", "onActivityResult called");
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
