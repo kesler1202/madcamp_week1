@@ -1,0 +1,7 @@
+<resources>
+    <!-- Other dimension resources -->
+
+    <dimen name="border_width">2dp</dimen> <!-- Define the border width here -->
+
+    <!-- Other dimension resources -->
+</resources>

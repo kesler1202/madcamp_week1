@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
         phonebook = new PhoneBook();
         gallery  = new Gallery();
-        calendar = new Calendar();
+        calendar = new Calendar_Frag();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container, phonebook).commit();
 
