@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_myprofile"
             android:background="@android:color/transparent"
-            android:layout_marginEnd="0dp"/>
+            android:layout_marginEnd="10dp"/>
 
         <!-- ImageButton for AddProfile -->
         <ImageButton
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_addcontact"
             android:background="@android:color/transparent"
-            android:layout_marginEnd="10dp"/>
+            android:layout_marginEnd="15dp"/>
 
     </LinearLayout>
 
@@ -47,20 +47,13 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:hint="  Search..."
+            android:hint="Search..."
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:background="@drawable/rounded_edittext_phonebook"
             android:inputType="text"
-            android:layout_marginEnd="8dp"/>
-
-        <ImageButton
-            android:id="@+id/searchButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_search"
-            android:background="@color/bright_green"
-            android:padding="9dp"/>
+            android:layout_marginEnd="5dp"
+            android:paddingLeft="10dp"/>
     </LinearLayout>
 
     <!-- ListView -->

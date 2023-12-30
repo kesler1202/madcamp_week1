@@ -17,4 +17,18 @@
         <!-- Customize the text size, style, etc., if desired -->
     </style>
 
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <!-- Custom Dialog Style -->
+    <style name="CustomDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Customizations for the dialog -->
+        <item name="android:windowMinWidthMajor">80%</item>
+        <item name="android:windowMinWidthMinor">80%</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/bright_green</item>
+    </style>
+
 </resources>
