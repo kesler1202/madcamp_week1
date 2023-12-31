@@ -4,7 +4,18 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@android:color/white">
+    android:background="@color/bottom_nav_background">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/qr_code_description"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="16dp"/>
 
     <ImageView
         android:id="@+id/imageViewQRCode"
@@ -13,19 +24,12 @@
         android:layout_gravity="center"
         android:contentDescription="@string/qr_code"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/qr_code_description"
-        android:gravity="center"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"/>
-
     <Button
         android:id="@+id/buttonClose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/close"
+        android:backgroundTint="@color/bright_green"
         android:layout_gravity="center"/>
 
 </LinearLayout>
