@@ -21,6 +21,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.io.IOException;
@@ -31,6 +33,26 @@ public class Gallery extends Fragment {
     private GalleryViewModel viewModel;
     private ImageAdapter imageAdapter;
     private Uri selectedImage;
+    private MutableLiveData<ArrayList<String>> commentsLiveData;
+    // CommentChangeListener 인터페이스 정의
+    public interface CommentChangeListener {
+        void onCommentChanged(ArrayList<String> updatedComments);
+    }
+
+    private CommentChangeListener commentChangeListener;
+
+    // setCommentChangeListener 메서드 정의
+    public void setCommentChangeListener(CommentChangeListener listener) {
+        this.commentChangeListener = listener;
+    }
+
+    public LiveData<ArrayList<String>> getComments() {
+        if (commentsLiveData == null) {
+            commentsLiveData = new MutableLiveData<>();
+            commentsLiveData.setValue(new ArrayList<>());
+        }
+        return commentsLiveData;
+    }
 
     @Override
     public void onResume() {
@@ -52,6 +74,11 @@ public class Gallery extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(GalleryViewModel.class);
+
+        // LiveData를 관찰하여 댓글이 변경될 때마다 처리
+        viewModel.getCommentsLiveData().observe(this, comments -> {
+            // 댓글이 변경되었을 때 수행할 작업
+        });
     }
 
 
@@ -104,10 +131,31 @@ public class Gallery extends Fragment {
 
 
     private void showImageDialog(int position) {
-        // 이미지 목록을 프래그먼트에 전달
-        ImageDialogFragment.newInstance(position, new ArrayList<>(viewModel.getImages()))
-                .show(getChildFragmentManager(), ImageDialogFragment.TAG);
+        // 이미지 및 댓글 데이터와 함께 ImageDialogFragment의 인스턴스 생성
+        ImageDialogFragment dialogFragment = ImageDialogFragment.newInstance(
+                position,
+                new ArrayList<>(viewModel.getImages()),
+                new ArrayList<>(viewModel.getComments())
+        );
+
+        // Set up a CommentChangeListener to handle comment changes
+        dialogFragment.setCommentChangeListener(new ImageDialogFragment.CommentChangeListener() {
+            @Override
+            public void onCommentChanged(ArrayList<String> updatedComments) {
+                // 댓글이 변경되었을 때 수행할 작업
+                viewModel.setComments(updatedComments);
+            }
+        });
+
+        // FragmentTransaction을 사용하여 ImageDialogFragment를 표시합니다.
+        getParentFragmentManager().beginTransaction()
+                .replace(android.R.id.content, dialogFragment)
+                .addToBackStack(null)  // 백 스택에 추가하여 뒤로 가기 동작을 지원
+                .commit();
     }
+
+
+
 
 
     // SimpleAnimationListener class to override only onAnimationEnd
