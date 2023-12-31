@@ -1,5 +1,5 @@
 package com.example.intentexample;
-
+import android.view.Gravity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,22 +16,17 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
 
-public class ImageDialogFragment extends Fragment {
-    // CommentChangeListener 인터페이스 정의
+public class ImageDialogFragment extends DialogFragment {
     public interface CommentChangeListener {
         void onCommentChanged(ArrayList<String> updatedComments);
     }
 
     private CommentChangeListener commentChangeListener;
-
-    // setCommentChangeListener 메서드 정의
-    public void setCommentChangeListener(CommentChangeListener listener) {
-        this.commentChangeListener = listener;
-    }
 
     private static final String ARG_POSITION = "position";
     private static final String ARG_IMAGES = "images";
@@ -40,8 +35,6 @@ public class ImageDialogFragment extends Fragment {
     private int position;
     private ArrayList<Bitmap> images;
     private ArrayList<String> comments;
-
-
 
     public static ImageDialogFragment newInstance(int position, ArrayList<Bitmap> images, ArrayList<String> comments) {
         ImageDialogFragment fragment = new ImageDialogFragment();
@@ -59,34 +52,22 @@ public class ImageDialogFragment extends Fragment {
         setRetainInstance(true);
 
         if (savedInstanceState != null) {
-            // 저장된 인스턴스 상태에서 댓글 복원
             comments = savedInstanceState.getStringArrayList(ARG_COMMENTS);
-        }
-
-        if (comments == null) {
-            // 저장된 인스턴스 상태에서 댓글을 복원하지 않았다면 초기화
-            comments = new ArrayList<>();
         }
 
         if (getArguments() != null) {
             position = getArguments().getInt(ARG_POSITION);
             images = getArguments().getParcelableArrayList(ARG_IMAGES);
+            if (comments == null) {
+                comments = getArguments().getStringArrayList(ARG_COMMENTS);
+            }
         }
     }
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.image_dialog, container, false);
-    }
-
-
-    private void notifyCommentChanged() {
-        // CommentChangeListener가 설정되어 있을 때만 호출
-        if (commentChangeListener != null) {
-            commentChangeListener.onCommentChanged(new ArrayList<>(comments));
-        }
     }
 
     @Override
@@ -99,91 +80,74 @@ public class ImageDialogFragment extends Fragment {
         ImageButton addButton = view.findViewById(R.id.addButton);
         ImageView closeButton = view.findViewById(R.id.close_button);
 
-        // 이미지 목록을 프래그먼트에 전달
         Bitmap clickedImage = images.get(position);
         dialogImageView.setImageBitmap(clickedImage);
 
-        // 기존 댓글 목록 추가
         addExistingComments(layoutComments, comments);
 
         addButton.setOnClickListener(v -> {
-            // + 버튼 클릭 시 동적으로 메모 추가
             String commentText = editTextSchedule.getText().toString();
             if (!commentText.isEmpty()) {
                 addComment(layoutComments, commentText);
-                editTextSchedule.setText(""); // 입력창 초기화
+                editTextSchedule.setText("");
 
-                // Update the comments list when a new comment is added
                 comments.add(commentText);
 
-                // 댓글이 변경되었음을 알림
                 notifyCommentChanged();
             }
         });
 
         closeButton.setOnClickListener(v -> {
-            // X 버튼 클릭 시 프래그먼트 닫기
             getParentFragmentManager().beginTransaction()
-                    .remove(ImageDialogFragment.this) // 현재 프래그먼트를 제거
+                    .remove(ImageDialogFragment.this)
                     .addToBackStack(null)
                     .commit();
         });
 
-
-        // 페이드인 애니메이션 적용
         AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
         fadeIn.setDuration(500);
         dialogImageView.startAnimation(fadeIn);
-
-
     }
 
+    private void notifyCommentChanged() {
+        if (commentChangeListener != null) {
+            commentChangeListener.onCommentChanged(new ArrayList<>(comments));
+        }
+    }
 
-    // 메모를 동적으로 추가하는 함수
     private void addComment(LinearLayout layoutComments, String commentText) {
         TextView commentTextView = new TextView(requireContext());
         commentTextView.setText(commentText);
         commentTextView.setTextColor(Color.WHITE);
+        // 텍스트 크기를 설정
+        commentTextView.setTextSize(16);
 
-        // 추가된 메모의 레이아웃 설정
+        // 색상 및 모서리가 둥근 형태의 박스 스타일을 적용
+        commentTextView.setBackgroundResource(R.drawable.rounded_box);
+
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        params.setMargins(0, 0, 0, 16); // 메모 간 간격 조절
+        params.setMargins(50, 0, 50, 16);
         commentTextView.setLayoutParams(params);
 
-        // 메모를 레이아웃에 추가
         layoutComments.addView(commentTextView);
     }
 
-    // SimpleAnimationListener class to override only onAnimationEnd
-    private static abstract class SimpleAnimationListener implements Animation.AnimationListener {
-        @Override
-        public void onAnimationStart(Animation animation) {
-        }
-
-        @Override
-        public void onAnimationEnd(Animation animation) {
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
+    private void addExistingComments(LinearLayout layoutComments, ArrayList<String> comments) {
+        for (String commentText : comments) {
+            addComment(layoutComments, commentText);
         }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        // 댓글을 인스턴스 상태에 저장
         outState.putStringArrayList(ARG_COMMENTS, comments);
     }
 
-    // 기존 댓글 목록 추가하는 함수
-    private void addExistingComments(LinearLayout layoutComments, ArrayList<String> comments) {
-        for (String commentText : comments) {
-            addComment(layoutComments, commentText);
-        }
+    public void setCommentChangeListener(CommentChangeListener listener) {
+        this.commentChangeListener = listener;
     }
 }
-
