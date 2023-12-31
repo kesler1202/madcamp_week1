@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,23 +21,68 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Gallery extends Fragment {
 
     private GalleryViewModel viewModel;
     private ImageAdapter imageAdapter;
     private Uri selectedImage;
+    private MutableLiveData<ArrayList<String>> commentsLiveData;
+    // CommentChangeListener 인터페이스 정의
+    public interface CommentChangeListener {
+        void onCommentChanged(ArrayList<String> updatedComments);
+    }
+
+    private CommentChangeListener commentChangeListener;
+
+    // setCommentChangeListener 메서드 정의
+    public void setCommentChangeListener(CommentChangeListener listener) {
+        this.commentChangeListener = listener;
+    }
+
+    public LiveData<ArrayList<String>> getComments() {
+        if (commentsLiveData == null) {
+            commentsLiveData = new MutableLiveData<>();
+            commentsLiveData.setValue(new ArrayList<>());
+        }
+        return commentsLiveData;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("YourFragment", "onResume called");
+        // onResume에서 이미지를 초기화하고 업데이트
+        if (imageAdapter == null) {
+            imageAdapter = new ImageAdapter(requireContext(), viewModel.getImages());
+            GridView gridView = requireView().findViewById(R.id.feed_gallery_view);
+            gridView.setAdapter(imageAdapter);
+        } else {
+            // 이미 어댑터가 생성되었으면 이미지 데이터만 업데이트
+            imageAdapter.notifyDataSetChanged();
+        }
+
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(GalleryViewModel.class);
+
+        // LiveData를 관찰하여 댓글이 변경될 때마다 처리
+        viewModel.getCommentsLiveData().observe(this, comments -> {
+            // 댓글이 변경되었을 때 수행할 작업
+        });
     }
 
-    @Override
+
+    private ActivityResultLauncher<String> pickImageLauncher;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.gallery, container, false);
@@ -49,7 +95,6 @@ public class Gallery extends Fragment {
 
         // Set up item click listener
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
-            // 변경: 이미지를 클릭할 때의 동작
             Bitmap clickedImage = viewModel.getImages().get(position);
             Toast.makeText(requireContext(), "Clicked: " + clickedImage, Toast.LENGTH_SHORT).show();
             showImageDialog(position);
@@ -58,63 +103,60 @@ public class Gallery extends Fragment {
         ImageButton btnAddPic = view.findViewById(R.id.btn_add_pic);
         btnAddPic.setOnClickListener(v -> openImagePicker());
 
+        // 이미지 피커 런처 등록
+        registerImagePickerLauncher();
+
         return view;
+    }
+    private void registerImagePickerLauncher() {
+        pickImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
+            if (result != null) {
+                selectedImage = result;
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImage);
+                    viewModel.addImage(bitmap);
+                    imageAdapter.notifyDataSetChanged();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(requireContext(), "사진 업로드 실패", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void openImagePicker() {
         pickImageLauncher.launch("image/*");
     }
 
-    private final ActivityResultLauncher<String> pickImageLauncher =
-            registerForActivityResult(new ActivityResultContracts.GetContent(),
-                    result -> {
-                        if (result != null) {
-                            selectedImage = result;
-                            try {
-                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImage);
-                                viewModel.addImage(bitmap);
-                                imageAdapter.notifyDataSetChanged();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            Toast.makeText(requireContext(), "사진 업로드 실패", Toast.LENGTH_LONG).show();
-                        }
-                    });
 
     private void showImageDialog(int position) {
-        Dialog dialog = new Dialog(requireContext());
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        dialog.setContentView(R.layout.image_dialog);
+        // 이미지 및 댓글 데이터와 함께 ImageDialogFragment의 인스턴스 생성
+        ImageDialogFragment dialogFragment = ImageDialogFragment.newInstance(
+                position,
+                new ArrayList<>(viewModel.getImages()),
+                new ArrayList<>(viewModel.getComments())
+        );
 
-        ImageView dialogImageView = dialog.findViewById(R.id.dialog_image_view);
-
-        // Set the clicked image in the dialog
-        Bitmap clickedImage = viewModel.getImages().get(position);
-        dialogImageView.setImageBitmap(clickedImage);
-
-        // Apply fadein animation
-        AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
-        fadeIn.setDuration(500);
-        dialogImageView.startAnimation(fadeIn);
-
-        dialog.show();
-
-        // Close the dialog with fadeout animation when clicked
-        dialogImageView.setOnClickListener(v -> {
-            AlphaAnimation fadeOut = new AlphaAnimation(1.0f, 0.0f);
-            fadeOut.setDuration(500);
-            dialogImageView.startAnimation(fadeOut);
-
-            fadeOut.setAnimationListener(new SimpleAnimationListener() {
-                @Override
-                public void onAnimationEnd(android.view.animation.Animation animation) {
-                    dialog.dismiss();
-                }
-            });
+        // Set up a CommentChangeListener to handle comment changes
+        dialogFragment.setCommentChangeListener(new ImageDialogFragment.CommentChangeListener() {
+            @Override
+            public void onCommentChanged(ArrayList<String> updatedComments) {
+                // 댓글이 변경되었을 때 수행할 작업
+                viewModel.setComments(updatedComments);
+            }
         });
+
+        // FragmentTransaction을 사용하여 ImageDialogFragment를 표시합니다.
+        getParentFragmentManager().beginTransaction()
+                .replace(android.R.id.content, dialogFragment)
+                .addToBackStack(null)  // 백 스택에 추가하여 뒤로 가기 동작을 지원
+                .commit();
     }
+
+
+
+
 
     // SimpleAnimationListener class to override only onAnimationEnd
     private static class SimpleAnimationListener implements android.view.animation.Animation.AnimationListener {

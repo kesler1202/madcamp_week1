@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -12,9 +13,9 @@ import java.util.ArrayList;
 public class ImageAdapter extends BaseAdapter {
 
     private final Context context;
-    private final ArrayList<Bitmap> images; // 변경: Bitmap으로 변경
+    private final ArrayList<Bitmap> images;
 
-    public ImageAdapter(Context context, ArrayList<Bitmap> images) { // 변경: ArrayList<Bitmap>으로 변경
+    public ImageAdapter(Context context, ArrayList<Bitmap> images) {
         this.context = context;
         this.images = images;
     }
@@ -39,16 +40,15 @@ public class ImageAdapter extends BaseAdapter {
         ImageView imageView;
 
         if (convertView == null) {
-            // If it's not recycled, initialize some attributes
             imageView = new ImageView(context);
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(200, 200));
+            imageView.setLayoutParams(new ViewGroup.LayoutParams(440, 440));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         } else {
             imageView = (ImageView) convertView;
         }
 
-        // 변경: 이미지를 Bitmap으로 설정
         imageView.setImageBitmap(images.get(position));
+
         return imageView;
     }
 }

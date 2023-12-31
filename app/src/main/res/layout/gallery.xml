@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/tab_color">
 
         <!-- 상단 프로필 부분 -->
         <LinearLayout
@@ -45,14 +46,14 @@
                 android:textSize="15dp" />
         </LinearLayout>
 
-        <!-- 갤러리 부분 -->
 
-
+    <!-- 갤러리 부분 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/tab_color"
         android:gravity="center"
+        android:layout_marginBottom="70dp"
         android:orientation="vertical"
         android:padding="10dp">
 
@@ -62,18 +63,24 @@
             android:layout_height="423dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:horizontalSpacing="16dp"
-            android:numColumns="3"
+            android:horizontalSpacing="5dp"
+            android:numColumns="2"
             android:padding="16dp"
-            android:verticalSpacing="16dp" />
+            android:verticalSpacing="5dp" />
 
         <!-- 이미지 추가 버튼 -->
         <ImageButton
             android:id="@+id/btn_add_pic"
-            android:layout_width="388dp"
-            android:layout_height="71dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@color/tab_color"
             android:contentDescription="Add Picture"
-            android:src="@drawable/plusblack" />
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:src="@drawable/newplusbtn" />
     </LinearLayout>
+
 </LinearLayout>
