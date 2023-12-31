@@ -135,15 +135,25 @@ public class MyProfileFragment extends Fragment {
 
     private void showQRCodeDialog(Bitmap qrBitmap) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Your QR Code");
+        LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        ImageView imageView = new ImageView(getActivity());
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        View dialogView = inflater.inflate(R.layout.custom_qr_dialog, null);
+        builder.setView(dialogView);
+
+        // Find the ImageView in the custom layout and set the QR code bitmap
+        ImageView imageView = dialogView.findViewById(R.id.imageViewQRCode); // Replace with your ImageView ID
         imageView.setImageBitmap(qrBitmap);
 
-        builder.setView(imageView);
-        builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
-
         AlertDialog dialog = builder.create();
+
+        // Handling other UI elements in custom_qr_dialog.xml
+        // For example, setting a button's onClickListener
+        Button closeButton = dialogView.findViewById(R.id.buttonClose); // Replace with your Button ID
+        closeButton.setOnClickListener(v -> dialog.dismiss());
+
+        // Create and show the AlertDialog
         dialog.show();
     }
 
