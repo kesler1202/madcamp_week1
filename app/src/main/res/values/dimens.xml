@@ -1,7 +1,7 @@
 <resources>
-    <!-- Other dimension resources -->
-
-    <dimen name="border_width">2dp</dimen> <!-- Define the border width here -->
-
-    <!-- Other dimension resources -->
+    <dimen name="border_width">2dp</dimen>
+    <dimen name="plan_padding">16dp</dimen>
+    <dimen name="plan_text_size">18sp</dimen>
+    <dimen name="vertical_margin">0dp</dimen>
+    <dimen name="extra_top_margin">2dp</dimen>
 </resources>
