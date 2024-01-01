@@ -38,6 +38,7 @@ public class Calendar_Frag extends Fragment {
         View view = inflater.inflate(R.layout.calendar, container, false);
 
         materialCalendarView = view.findViewById(R.id.calendarView);
+        materialCalendarView.setPadding(0, 60, 0, 0);
         editTextSchedule = view.findViewById(R.id.editTextSchedule);
         ImageButton addButton = view.findViewById(R.id.addButton);
         scrollViewLayout = view.findViewById(R.id.planContainer); // Replace with your actual LinearLayout ID

@@ -238,6 +238,7 @@ public class PhoneBook extends Fragment {
     private void performDeletion(Contact contact) {
         // Remove the contact from your data list
         contactList.remove(contact);
+        originalContactList.remove(contact);
 
         // Update the JSON in storage
         Gson gson = new Gson();
