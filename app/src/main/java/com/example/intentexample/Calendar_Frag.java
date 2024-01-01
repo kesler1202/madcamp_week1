@@ -11,6 +11,7 @@
     import android.widget.EditText;
     import android.widget.ImageButton;
     import android.widget.LinearLayout;
+    import android.widget.RelativeLayout;
     import android.widget.TextView;
 
     import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -47,7 +48,7 @@
             materialCalendarView.setPadding(0, 60, 0, 0);
             editTextSchedule = view.findViewById(R.id.editTextSchedule);
             ImageButton addButton = view.findViewById(R.id.addButton);
-            scrollViewLayout = view.findViewById(R.id.planContainer); // Replace with your actual LinearLayout ID
+            scrollViewLayout = view.findViewById(R.id.planContainer);
 
             sharedPreferences = getActivity().getSharedPreferences("CalendarPlans", Context.MODE_PRIVATE);
 
@@ -178,28 +179,33 @@
             planView.setPadding(padding, padding, padding, padding);
 
             ImageButton deleteButton = new ImageButton(getActivity());
-            deleteButton.setImageResource(R.drawable.red_trash); // Use your red_trash.png here
+            deleteButton.setImageResource(R.drawable.red_trash); // Your red_trash.png
             deleteButton.setBackgroundColor(Color.TRANSPARENT);
 
-            // Create a horizontal layout to hold the plan text and delete button
-            LinearLayout horizontalLayout = new LinearLayout(getActivity());
-            horizontalLayout.setOrientation(LinearLayout.HORIZONTAL);
-            horizontalLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
+            // Create a RelativeLayout
+            RelativeLayout relativeLayout = new RelativeLayout(getActivity());
+            relativeLayout.setLayoutParams(new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT));
 
-            LinearLayout.LayoutParams planViewParams = new LinearLayout.LayoutParams(
-                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f); // 1f weight
+            // Layout params for planView
+            RelativeLayout.LayoutParams planViewParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
             planView.setLayoutParams(planViewParams);
 
-            // Set layout parameters for deleteButton
-            LinearLayout.LayoutParams deleteButtonParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            // Layout params for deleteButton
+            RelativeLayout.LayoutParams deleteButtonParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+            deleteButtonParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            deleteButtonParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            int marginEnd = getResources().getDimensionPixelSize(R.dimen.delete_button_margin_end); // Define in dimens.xml
+            deleteButtonParams.setMarginEnd(marginEnd);
             deleteButton.setLayoutParams(deleteButtonParams);
 
-            horizontalLayout.addView(planView);
-            horizontalLayout.addView(deleteButton);
+            relativeLayout.addView(planView);
+            relativeLayout.addView(deleteButton);
 
 
             // Set OnClickListener for delete button
@@ -213,7 +219,7 @@
             });
 
             // Add horizontal layout to scrollViewLayout
-            scrollViewLayout.addView(horizontalLayout);
+            scrollViewLayout.addView(relativeLayout);
         }
         private void deletePlanFromSharedPreferences(CalendarDay date, String planText) {
             List<String> plans = getPlansForDate(date);
