@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -126,35 +127,67 @@ public class PhoneBook extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    private void showContactDetailsDialog(Contact contact) {
+    private void showContactDetailsDialog(final Contact contact) {
+        // Inflate the custom layout
+        View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.profile_detail_dialog, null);
+
+        // Find views in the custom layout
+        ImageButton deleteButton = dialogView.findViewById(R.id.deleteButton);
+        ImageButton cancelButton = dialogView.findViewById(R.id.backButton);
+        ImageView nameImage = dialogView.findViewById(R.id.profileNameImage);
+        ImageView phoneImage = dialogView.findViewById(R.id.profilePhoneImage);
+        ImageView schoolImage = dialogView.findViewById(R.id.profileSchoolImage);
+        ImageView mailImage = dialogView.findViewById(R.id.profileMailImage);
+
+        // Set the images
+        nameImage.setImageResource(R.drawable.profile_name);
+        phoneImage.setImageResource(R.drawable.profile_phone);
+        schoolImage.setImageResource(R.drawable.profile_school);
+        mailImage.setImageResource(R.drawable.profile_mail);
+
+        // Find TextViews in the custom layout
+        TextView nameTextView = dialogView.findViewById(R.id.profileNameText);
+        TextView phoneTextView = dialogView.findViewById(R.id.profilePhoneText);
+        TextView schoolTextView = dialogView.findViewById(R.id.profileSchoolText);
+        TextView mailTextView = dialogView.findViewById(R.id.profileMailText);
+
+        // Set the contact details
+        nameTextView.setText(contact.getName());
+        phoneTextView.setText(contact.getPhone());
+        schoolTextView.setText(contact.getSchool());
+        mailTextView.setText(contact.getMail());
+
+        // Create the AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme);
-        builder.setTitle("Detail");
 
-        // Create the message showing contact details
-        String message = "Name: " + contact.getName() + "\n" +
-                "Phone: " + contact.getPhone() + "\n" +
-                "School: " + contact.getSchool() + "\n" +
-                "Mail: " + contact.getMail();
-        builder.setMessage(message);
+        // Set custom view
+        builder.setView(dialogView);
 
+        // Create the AlertDialog
+        final AlertDialog alertDialog = builder.create();
 
         // Delete button
-        builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
+                // Show delete confirmation dialog
                 deleteContact(contact);
+                // Dismiss the dialog after deletion
+                alertDialog.dismiss();
             }
         });
 
         // Cancel button
-        builder.setNeutralButton("back", new DialogInterface.OnClickListener() {
+        cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+            public void onClick(View v) {
+                // Just close the dialog
+                alertDialog.dismiss();
             }
         });
 
-        builder.show();
+        // Show the dialog
+        alertDialog.show();
     }
 
     private void deleteContact(final Contact contact) {
@@ -199,6 +232,7 @@ public class PhoneBook extends Fragment {
             }
         });
     }
+
 
 
     private void performDeletion(Contact contact) {
