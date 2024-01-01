@@ -137,14 +137,6 @@ public class PhoneBook extends Fragment {
                 "Mail: " + contact.getMail();
         builder.setMessage(message);
 
-        // Modify button
-        builder.setPositiveButton("Modify", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // TODO: Implement the functionality to modify the contact
-                // showModifyContactDialog(contact);
-            }
-        });
 
         // Delete button
         builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
