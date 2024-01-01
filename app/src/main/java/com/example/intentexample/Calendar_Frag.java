@@ -1,5 +1,7 @@
 package com.example.intentexample;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,11 +27,14 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 
 public class Calendar_Frag extends Fragment {
 
     private MaterialCalendarView materialCalendarView;
-    private HashMap<CalendarDay, List<String>> dateToPlansMap = new HashMap<>();
+    private SharedPreferences sharedPreferences;
     private EditText editTextSchedule;
     private LinearLayout scrollViewLayout;
 
@@ -43,6 +48,8 @@ public class Calendar_Frag extends Fragment {
         ImageButton addButton = view.findViewById(R.id.addButton);
         scrollViewLayout = view.findViewById(R.id.planContainer); // Replace with your actual LinearLayout ID
 
+        sharedPreferences = getActivity().getSharedPreferences("CalendarPlans", Context.MODE_PRIVATE);
+
         // Set the first day of the week
         Calendar today = Calendar.getInstance();
         materialCalendarView.setSelectedDate(today);
@@ -55,15 +62,14 @@ public class Calendar_Frag extends Fragment {
                 updateScrollViewForDate(date);
             }
         });
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String planText = editTextSchedule.getText().toString();
                 if (!planText.isEmpty()) {
                     CalendarDay selectedDate = materialCalendarView.getSelectedDate();
-                    List<String> plans = dateToPlansMap.getOrDefault(selectedDate, new ArrayList<>());
-                    plans.add(planText);
-                    dateToPlansMap.put(selectedDate, plans);
+                    savePlanToSharedPreferences(selectedDate, planText);
                     updateScrollViewForDate(selectedDate);
                     updateCalendarWithEvents();
                     editTextSchedule.setText(""); // Clear the input box
@@ -73,13 +79,48 @@ public class Calendar_Frag extends Fragment {
         updateCalendarWithEvents();
         return view;
     }
+    private void savePlanToSharedPreferences(CalendarDay date, String planText) {
+        List<String> plans = getPlansForDate(date);
+        plans.add(planText);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        JSONArray jsonArray = new JSONArray(plans);
+        editor.putString(date.toString(), jsonArray.toString());
+        editor.apply();
+    }
+    private List<String> getPlansForDate(CalendarDay date) {
+        List<String> plans = new ArrayList<>();
+        String json = sharedPreferences.getString(date.toString(), null);
+
+        if (json != null) {
+            try {
+                JSONArray jsonArray = new JSONArray(json);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    plans.add(jsonArray.getString(i));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return plans;
+    }
     private void updateCalendarWithEvents() {
         Set<CalendarDay> datesWithEvents = new HashSet<>();
 
-        for (CalendarDay date : dateToPlansMap.keySet()) {
-            if (!dateToPlansMap.get(date).isEmpty()) {
-                datesWithEvents.add(date);
+        // Define the range of dates to check. For example, current year
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.set(Calendar.DAY_OF_YEAR, 1); // Start from the first day of the year
+        Calendar endCalendar = Calendar.getInstance();
+        endCalendar.set(Calendar.DAY_OF_YEAR, startCalendar.getActualMaximum(Calendar.DAY_OF_YEAR)); // End on the last day of the year
+
+        while (startCalendar.before(endCalendar)) {
+            CalendarDay day = CalendarDay.from(startCalendar);
+            List<String> plans = getPlansForDate(day);
+            if (!plans.isEmpty()) {
+                datesWithEvents.add(day);
             }
+            startCalendar.add(Calendar.DAY_OF_YEAR, 1); // Move to the next day
         }
 
         EventDecorator decorator = new EventDecorator(datesWithEvents);
@@ -97,7 +138,7 @@ public class Calendar_Frag extends Fragment {
     }
     private void updateScrollViewForDate(CalendarDay date) {
         scrollViewLayout.removeAllViews();
-        List<String> plans = dateToPlansMap.getOrDefault(date, new ArrayList<>());
+        List<String> plans = getPlansForDate(date);
         for (String plan : plans) {
             addPlanToScrollView(plan);
         }
