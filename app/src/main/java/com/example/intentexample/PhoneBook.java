@@ -165,30 +165,44 @@ public class PhoneBook extends Fragment {
     }
 
     private void deleteContact(final Contact contact) {
-        // Create an AlertDialog for confirmation
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Delete Contact");
-        builder.setMessage("Are you sure you want to delete this contact?");
+        // delete_dialog.xml 파일을 이용하여 View를 생성합니다.
+        View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.delete_dialog, null);
 
-        // YES button
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        // AlertDialog 생성
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(dialogView);
+
+        // delete_dialog.xml에서 정의한 View들을 찾습니다.
+        ImageButton deleteButton = dialogView.findViewById(R.id.deleteButton);
+        ImageButton cancelButton = dialogView.findViewById(R.id.cancelButton);
+
+        // AlertDialog의 내용을 설정하지 않습니다.
+
+        // Show the dialog
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+        // Cancel button
+        cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
+                // Just close the dialog
+                alertDialog.dismiss();
+            }
+        });
+
+        // Delete button
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 // Perform the actual deletion
                 performDeletion(contact);
+                // Dismiss the dialog after deletion
+                alertDialog.dismiss();
             }
         });
-
-        // NO button
-        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss(); // Just close the dialog
-            }
-        });
-
-        builder.show();
     }
+
 
     private void performDeletion(Contact contact) {
         // Remove the contact from your data list
