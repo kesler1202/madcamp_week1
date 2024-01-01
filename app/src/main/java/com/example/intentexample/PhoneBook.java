@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -175,6 +176,10 @@ public class PhoneBook extends Fragment {
         // delete_dialog.xml에서 정의한 View들을 찾습니다.
         ImageButton deleteButton = dialogView.findViewById(R.id.deleteButton);
         ImageButton cancelButton = dialogView.findViewById(R.id.cancelButton);
+        ImageView deleteImage = dialogView.findViewById(R.id.deleteImage);
+
+        // delete_dialog.xml에서 정의한 ImageView에 이미지 설정
+        deleteImage.setImageResource(R.drawable.delete);
 
         // AlertDialog의 내용을 설정하지 않습니다.
 
