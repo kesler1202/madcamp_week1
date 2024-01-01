@@ -29,8 +29,9 @@
             android:focusable="true"
             android:src="@drawable/close" />
 
-        <ImageView
-            android:id="@+id/dialog_image_view"
+        <!-- PhotoView로 변경 -->
+        <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/dialog_photo_view"
             android:layout_width="match_parent"
             android:layout_height="354dp"
             android:scaleType="fitCenter"
@@ -84,6 +85,5 @@
 
     </LinearLayout>
 </LinearLayout>
-
 
 

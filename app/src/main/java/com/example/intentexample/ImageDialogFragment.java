@@ -17,7 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
+import com.github.chrisbanes.photoview.PhotoView;
 
 import java.util.ArrayList;
 
@@ -74,14 +74,14 @@ public class ImageDialogFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageView dialogImageView = view.findViewById(R.id.dialog_image_view);
+        PhotoView dialogPhotoView = view.findViewById(R.id.dialog_photo_view);
         LinearLayout layoutComments = view.findViewById(R.id.layoutComments);
         EditText editTextSchedule = view.findViewById(R.id.editTextSchedule);
         ImageButton addButton = view.findViewById(R.id.addButton);
         ImageView closeButton = view.findViewById(R.id.close_button);
 
         Bitmap clickedImage = images.get(position);
-        dialogImageView.setImageBitmap(clickedImage);
+        dialogPhotoView.setImageBitmap(clickedImage);
 
         addExistingComments(layoutComments, comments);
 
@@ -106,7 +106,7 @@ public class ImageDialogFragment extends DialogFragment {
 
         AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
         fadeIn.setDuration(500);
-        dialogImageView.startAnimation(fadeIn);
+        dialogPhotoView.startAnimation(fadeIn);
     }
 
     private void notifyCommentChanged() {
