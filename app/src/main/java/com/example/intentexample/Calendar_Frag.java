@@ -1,9 +1,13 @@
     package com.example.intentexample;
 
+    import android.app.AlertDialog;
     import android.content.Context;
+    import android.content.DialogInterface;
     import android.content.SharedPreferences;
     import android.graphics.Color;
     import android.os.Bundle;
+    import android.text.Editable;
+    import android.text.TextWatcher;
     import android.util.TypedValue;
     import android.view.LayoutInflater;
     import android.view.View;
@@ -11,15 +15,19 @@
     import android.widget.EditText;
     import android.widget.ImageButton;
     import android.widget.LinearLayout;
+    import android.widget.NumberPicker;
     import android.widget.RelativeLayout;
     import android.widget.TextView;
+    import android.app.TimePickerDialog;
+    import android.widget.TimePicker;
 
     import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
     import com.prolificinteractive.materialcalendarview.CalendarDay;
     import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
     import java.util.ArrayList;
-    import java.util.HashMap;
+    import java.util.Collections;
+    import java.util.Comparator;
     import java.util.List;
     import java.util.HashSet;
     import java.util.Set;
@@ -47,6 +55,21 @@
             materialCalendarView.setPadding(0, 60, 0, 0);
             editTextSchedule = view.findViewById(R.id.editTextSchedule);
             ImageButton addButton = view.findViewById(R.id.addButton);
+            addButton.setEnabled(false);
+            editTextSchedule.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    addButton.setEnabled(s.length() > 0);
+                }
+            });
             scrollViewLayout = view.findViewById(R.id.planContainer);
 
             sharedPreferences = getActivity().getSharedPreferences("CalendarPlans", Context.MODE_PRIVATE);
@@ -67,14 +90,49 @@
             addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String planText = editTextSchedule.getText().toString();
-                    if (!planText.isEmpty()) {
-                        CalendarDay selectedDate = materialCalendarView.getSelectedDate();
-                        savePlanToSharedPreferences(selectedDate, planText);
-                        updateScrollViewForDate(selectedDate);
-                        updateCalendarWithEvents(false);
-                        editTextSchedule.setText("");
-                    }
+                    final View dialogView = View.inflate(getActivity(), R.layout.time_picker_dialog, null);
+                    final NumberPicker numberPickerHour = dialogView.findViewById(R.id.numberPickerHour);
+                    final NumberPicker numberPickerMinute = dialogView.findViewById(R.id.numberPickerMinute);
+
+                    numberPickerHour.setMaxValue(23);
+                    numberPickerHour.setMinValue(0);
+                    numberPickerHour.setFormatter(new NumberPicker.Formatter() {
+                        @Override
+                        public String format(int value) {
+                            return String.format("%02d", value);
+                        }
+                    });
+
+                    numberPickerMinute.setMaxValue(59);
+                    numberPickerMinute.setMinValue(0);
+                    numberPickerMinute.setFormatter(new NumberPicker.Formatter() {
+                        @Override
+                        public String format(int value) {
+                            return String.format("%02d", value);
+                        }
+                    });
+
+                    new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme)
+                            .setTitle("Select Time")
+                            .setView(dialogView)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    int hour = numberPickerHour.getValue();
+                                    int minute = numberPickerMinute.getValue();
+                                    String time = String.format("%02d:%02d", hour, minute);
+                                    String planText = editTextSchedule.getText().toString();
+                                    String planWithTime = time + " - " + planText;
+
+                                    CalendarDay selectedDate = materialCalendarView.getSelectedDate();
+                                    savePlanToSharedPreferences(selectedDate, planWithTime);
+                                    updateScrollViewForDate(selectedDate);
+                                    updateCalendarWithEvents(false);
+                                    editTextSchedule.setText("");
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .show();
                 }
             });
             updateCalendarWithEvents(false);
@@ -103,6 +161,19 @@
                     e.printStackTrace();
                 }
             }
+
+            // Sort the plans based on time
+            Collections.sort(plans, new Comparator<String>() {
+                @Override
+                public int compare(String plan1, String plan2) {
+                    return extractTime(plan1).compareTo(extractTime(plan2));
+                }
+
+                private String extractTime(String plan) {
+                    // Assuming the format is always "HH:mm - Plan text"
+                    return plan.split(" - ")[0];
+                }
+            });
 
             return plans;
         }
