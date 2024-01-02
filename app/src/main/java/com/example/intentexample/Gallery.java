@@ -1,88 +1,51 @@
 package com.example.intentexample;
 
-import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.animation.AlphaAnimation;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Gallery extends Fragment {
 
     private GalleryViewModel viewModel;
     private ImageAdapter imageAdapter;
     private Uri selectedImage;
-    private MutableLiveData<ArrayList<String>> commentsLiveData;
-    // CommentChangeListener 인터페이스 정의
-    public interface CommentChangeListener {
-        void onCommentChanged(ArrayList<String> updatedComments);
-    }
 
-    private CommentChangeListener commentChangeListener;
-
-    // setCommentChangeListener 메서드 정의
-    public void setCommentChangeListener(CommentChangeListener listener) {
-        this.commentChangeListener = listener;
-    }
-
-    public LiveData<ArrayList<String>> getComments() {
-        if (commentsLiveData == null) {
-            commentsLiveData = new MutableLiveData<>();
-            commentsLiveData.setValue(new ArrayList<>());
-        }
-        return commentsLiveData;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("YourFragment", "onResume called");
-        // onResume에서 이미지를 초기화하고 업데이트
-        if (imageAdapter == null) {
-            imageAdapter = new ImageAdapter(requireContext(), viewModel.getImages());
-            GridView gridView = requireView().findViewById(R.id.feed_gallery_view);
-            gridView.setAdapter(imageAdapter);
-        } else {
-            // 이미 어댑터가 생성되었으면 이미지 데이터만 업데이트
-            imageAdapter.notifyDataSetChanged();
-        }
-
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(GalleryViewModel.class);
 
-        // LiveData를 관찰하여 댓글이 변경될 때마다 처리
-        viewModel.getCommentsLiveData().observe(this, comments -> {
-            // 댓글이 변경되었을 때 수행할 작업
-        });
+        // 이미지 피커 런처 등록
+        registerImagePickerLauncher();
     }
 
-
     private ActivityResultLauncher<String> pickImageLauncher;
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.gallery, container, false);
@@ -108,34 +71,50 @@ public class Gallery extends Fragment {
 
         return view;
     }
+
     private void registerImagePickerLauncher() {
-        pickImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
-            if (result != null) {
-                selectedImage = result;
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImage);
-                    viewModel.addImage(bitmap);
-                    imageAdapter.notifyDataSetChanged();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (pickImageLauncher == null) {
+            pickImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
+                if (result != null) {
+                    selectedImage = result;
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImage);
+                        // 이미지를 추가하고 SharedPreferences에 저장하는 메서드 호출
+                        addImageAndSaveToSharedPreferences(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "사진 업로드 실패", Toast.LENGTH_LONG).show();
                 }
-            } else {
-                Toast.makeText(requireContext(), "사진 업로드 실패", Toast.LENGTH_LONG).show();
-            }
-        });
+            });
+        }
     }
+
 
     private void openImagePicker() {
         pickImageLauncher.launch("image/*");
     }
 
+    private void addImageAndSaveToSharedPreferences(Bitmap bitmap) {
+        // 이미지를 SharedPreferences에 저장
+        Set<String> imageSet = loadImagesFromSharedPreferences();
+        byte[] byteArray = getByteArrayFromBitmap(bitmap);
+        String encodedImage = encodeImageToString(byteArray);
+        imageSet.add(encodedImage);
+        saveImagesToSharedPreferences(imageSet);
+
+        // ViewModel에 이미지 추가
+        viewModel.addImage(bitmap);
+        imageAdapter.notifyDataSetChanged();
+    }
 
     private void showImageDialog(int position) {
         // 이미지 및 댓글 데이터와 함께 ImageDialogFragment의 인스턴스 생성
         ImageDialogFragment dialogFragment = ImageDialogFragment.newInstance(
                 position,
                 new ArrayList<>(viewModel.getImages()),
-                new ArrayList<>(viewModel.getComments())
+                new ArrayList<>(viewModel.getCommentsLiveData().getValue())
         );
 
         // Set up a CommentChangeListener to handle comment changes
@@ -154,22 +133,29 @@ public class Gallery extends Fragment {
                 .commit();
     }
 
+    // 이미지 목록을 SharedPreferences에 저장하기
+    private void saveImagesToSharedPreferences(Set<String> imageSet) {
+        SharedPreferences preferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putStringSet("images", imageSet);
+        editor.apply();
+    }
 
+    // 이미지 목록을 SharedPreferences에서 불러오기
+    private Set<String> loadImagesFromSharedPreferences() {
+        SharedPreferences preferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        return preferences.getStringSet("images", new HashSet<>());
+    }
 
+    // Bitmap을 byte 배열로 변환하는 메서드
+    private byte[] getByteArrayFromBitmap(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
+    }
 
-
-    // SimpleAnimationListener class to override only onAnimationEnd
-    private static class SimpleAnimationListener implements android.view.animation.Animation.AnimationListener {
-        @Override
-        public void onAnimationStart(android.view.animation.Animation animation) {
-        }
-
-        @Override
-        public void onAnimationEnd(android.view.animation.Animation animation) {
-        }
-
-        @Override
-        public void onAnimationRepeat(android.view.animation.Animation animation) {
-        }
+    // byte 배열을 Base64로 인코딩하는 메서드
+    private String encodeImageToString(byte[] byteArray) {
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 }
