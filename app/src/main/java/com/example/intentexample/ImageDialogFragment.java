@@ -1,4 +1,6 @@
 package com.example.intentexample;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.Gravity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -20,6 +22,8 @@ import androidx.fragment.app.DialogFragment;
 import com.github.chrisbanes.photoview.PhotoView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ImageDialogFragment extends DialogFragment {
     public interface CommentChangeListener {
@@ -35,6 +39,14 @@ public class ImageDialogFragment extends DialogFragment {
     private int position;
     private ArrayList<Bitmap> images;
     private ArrayList<String> comments;
+    private ArrayList<String> loadCommentsFromSharedPreferences() {
+        SharedPreferences preferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+
+        // 문자열의 Set을 불러와 ArrayList로 변환
+        Set<String> commentsSet = preferences.getStringSet("comments", new HashSet<>());
+        return new ArrayList<>(commentsSet);
+    }
+
 
     public static ImageDialogFragment newInstance(int position, ArrayList<Bitmap> images, ArrayList<String> comments) {
         ImageDialogFragment fragment = new ImageDialogFragment();
@@ -45,6 +57,20 @@ public class ImageDialogFragment extends DialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+    private void saveCommentsToSharedPreferences(ArrayList<String> comments) {
+        SharedPreferences preferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        // ArrayList를 문자열의 Set으로 변환하여 저장
+        Set<String> commentsSet = new HashSet<>(comments);
+        editor.putStringSet("comments", commentsSet);
+
+        editor.apply();
+    }
+
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,10 +85,17 @@ public class ImageDialogFragment extends DialogFragment {
             position = getArguments().getInt(ARG_POSITION);
             images = getArguments().getParcelableArrayList(ARG_IMAGES);
             if (comments == null) {
+                // getArguments()에서 댓글을 로드하고, 사용 가능하지 않은 경우 SharedPreferences에서 불러옴
                 comments = getArguments().getStringArrayList(ARG_COMMENTS);
+                if (comments == null) {
+                    // 수정된 부분: loadCommentsFromSharedPreferences()의 반환값을 comments에 할당
+                    comments = loadCommentsFromSharedPreferences();
+                }
             }
         }
     }
+
+
 
     @Nullable
     @Override
@@ -112,8 +145,12 @@ public class ImageDialogFragment extends DialogFragment {
     private void notifyCommentChanged() {
         if (commentChangeListener != null) {
             commentChangeListener.onCommentChanged(new ArrayList<>(comments));
+
+            // 댓글을 SharedPreferences에 저장
+            saveCommentsToSharedPreferences(comments);
         }
     }
+
 
     private void addComment(LinearLayout layoutComments, String commentText) {
         TextView commentTextView = new TextView(requireContext());
