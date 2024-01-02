@@ -44,6 +44,7 @@
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="15dp" />
+
         </LinearLayout>
 
     <!-- 갤러리 부분 -->
