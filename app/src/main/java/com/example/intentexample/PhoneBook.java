@@ -5,8 +5,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.Manifest;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.app.Activity;
@@ -51,6 +57,7 @@ public class PhoneBook extends Fragment {
     ArrayList<Contact> contactList;
     ArrayAdapter<Contact> adapter;
     ArrayList<Contact> originalContactList;
+    private static final int REQUEST_CALL = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -165,6 +172,13 @@ public class PhoneBook extends Fragment {
 
         // Create the AlertDialog
         final AlertDialog alertDialog = builder.create();
+
+        phoneTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makePhoneCall(contact.getPhone());
+            }
+        });
 
         // Delete button
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -364,6 +378,33 @@ public class PhoneBook extends Fragment {
             e.printStackTrace();
             Log.e("PhoneBook", "Error parsing QR Data", e);
             Toast.makeText(getActivity(), "Error adding contact from QR code", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void makePhoneCall(String number) {
+        try {
+            if (number.trim().length() > 0) {
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                } else {
+                    String dial = "tel:" + number;
+                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+                }
+            } else {
+                Toast.makeText(getActivity(), "Enter Phone Number", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CALL) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted. You can perform the call action now.
+            } else {
+                Toast.makeText(getActivity(), "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

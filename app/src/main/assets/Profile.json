@@ -1,21 +1,21 @@
 [
   {"name": "Son",
-    "phone": "010-1234-5671",
+    "phone": "01012345671",
     "school": "KAIST",
     "mail":  "kesler@kaist.ac.kr"},
 
   {"name": "Hwang",
-    "phone": "010-1234-1678",
+    "phone": "01012341678",
     "school": "이화여자대학교",
     "mail":  "jryeong@naver.com"},
 
   {"name": "John",
-    "phone": "010-1334-5678",
+    "phone": "01013345678",
     "school": "경북대학교",
     "mail":  "abcxyz@gmail.com"},
 
   {"name": "Song",
-    "phone": "010-1423-5678",
+    "phone": "01014235678",
     "school": "부산대학교",
     "mail":  "xyzabc@gmail.com"}
 ]
