@@ -66,9 +66,6 @@ public class Gallery extends Fragment {
         ImageButton btnAddPic = view.findViewById(R.id.btn_add_pic);
         btnAddPic.setOnClickListener(v -> openImagePicker());
 
-        // 이미지 피커 런처 등록
-        registerImagePickerLauncher();
-
         return view;
     }
 
@@ -79,7 +76,6 @@ public class Gallery extends Fragment {
                     selectedImage = result;
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImage);
-                        // 이미지를 추가하고 SharedPreferences에 저장하는 메서드 호출
                         addImageAndSaveToSharedPreferences(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -106,6 +102,11 @@ public class Gallery extends Fragment {
 
         // ViewModel에 이미지 추가
         viewModel.addImage(bitmap);
+
+        // 로그 추가
+        Log.d("Bitmap", "Image added to ViewModel");
+
+        // 이미지 어댑터에 데이터 변경을 알려줌
         imageAdapter.notifyDataSetChanged();
     }
 
