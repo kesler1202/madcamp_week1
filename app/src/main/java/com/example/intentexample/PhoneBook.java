@@ -2,15 +2,17 @@ package com.example.intentexample;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.Manifest;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import android.app.Activity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -31,9 +33,6 @@ import com.google.gson.reflect.TypeToken;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,13 +43,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class PhoneBook extends Fragment {
     ListView listView;
     ArrayList<Contact> contactList;
     ArrayAdapter<Contact> adapter;
     ArrayList<Contact> originalContactList;
+    private static final int REQUEST_CALL = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,12 +77,10 @@ public class PhoneBook extends Fragment {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 // Not used
             }
-
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 filterContacts(charSequence.toString());
             }
-
             @Override
             public void afterTextChanged(Editable editable) {
                 // Not used
@@ -100,7 +99,6 @@ public class PhoneBook extends Fragment {
                         .commit();
             }
         });
-
         ImageButton addProfileButton = view.findViewById(R.id.AddProfile);
         addProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,30 +106,14 @@ public class PhoneBook extends Fragment {
                 startQRScanner();
             }
         });
-
         return view;
     }
 
-    private void filterContacts(String text) {
-        ArrayList<Contact> filteredList = new ArrayList<>();
-
-        for (Contact contact : originalContactList) {
-            if (contact.getName().toLowerCase().contains(text.toLowerCase())) {
-                filteredList.add(contact);
-            }
-        }
-
-        // Update the adapter with the filtered list
-        adapter.clear();
-        adapter.addAll(filteredList);
-        adapter.notifyDataSetChanged();
-    }
-
     private void showContactDetailsDialog(final Contact contact) {
-        // Inflate the custom layout
+        // 커스텀 레이아웃 생성
         View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.profile_detail_dialog, null);
 
-        // Find views in the custom layout
+        // 버튼 및 이미지 생성
         ImageButton deleteButton = dialogView.findViewById(R.id.deleteButton);
         ImageButton cancelButton = dialogView.findViewById(R.id.backButton);
         ImageView nameImage = dialogView.findViewById(R.id.profileNameImage);
@@ -139,45 +121,42 @@ public class PhoneBook extends Fragment {
         ImageView schoolImage = dialogView.findViewById(R.id.profileSchoolImage);
         ImageView mailImage = dialogView.findViewById(R.id.profileMailImage);
 
-        // Set the images
         nameImage.setImageResource(R.drawable.profile_name);
         phoneImage.setImageResource(R.drawable.profile_phone);
         schoolImage.setImageResource(R.drawable.profile_school);
         mailImage.setImageResource(R.drawable.profile_mail);
 
-        // Find TextViews in the custom layout
         TextView nameTextView = dialogView.findViewById(R.id.profileNameText);
         TextView phoneTextView = dialogView.findViewById(R.id.profilePhoneText);
         TextView schoolTextView = dialogView.findViewById(R.id.profileSchoolText);
         TextView mailTextView = dialogView.findViewById(R.id.profileMailText);
 
-        // Set the contact details
         nameTextView.setText(contact.getName());
         phoneTextView.setText(contact.getPhone());
         schoolTextView.setText(contact.getSchool());
         mailTextView.setText(contact.getMail());
 
-        // Create the AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme);
 
-        // Set custom view
         builder.setView(dialogView);
 
-        // Create the AlertDialog
         final AlertDialog alertDialog = builder.create();
 
-        // Delete button
+        phoneTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makePhoneCall(contact.getPhone());
+            }
+        });
+
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Show delete confirmation dialog
                 deleteContact(contact);
-                // Dismiss the dialog after deletion
                 alertDialog.dismiss();
             }
         });
 
-        // Cancel button
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -185,8 +164,6 @@ public class PhoneBook extends Fragment {
                 alertDialog.dismiss();
             }
         });
-
-        // Show the dialog
         alertDialog.show();
     }
 
@@ -207,12 +184,9 @@ public class PhoneBook extends Fragment {
         deleteImage.setImageResource(R.drawable.delete);
 
         // AlertDialog의 내용을 설정하지 않습니다.
-
-        // Show the dialog
         final AlertDialog alertDialog = builder.create();
         alertDialog.show();
 
-        // Cancel button
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -221,31 +195,26 @@ public class PhoneBook extends Fragment {
             }
         });
 
-        // Delete button
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Perform the actual deletion
                 performDeletion(contact);
-                // Dismiss the dialog after deletion
                 alertDialog.dismiss();
             }
         });
     }
 
-
-
     private void performDeletion(Contact contact) {
-        // Remove the contact from your data list
+        // 연락처 삭제
         contactList.remove(contact);
         originalContactList.remove(contact);
 
-        // Update the JSON in storage
+        // internal json 업데이트
         Gson gson = new Gson();
         String json = gson.toJson(contactList);
         saveJsonToStorage(json);
 
-        // Refresh the ListView
+        // ListView 업데이트
         adapter.notifyDataSetChanged();
     }
 
@@ -261,20 +230,6 @@ public class PhoneBook extends Fragment {
             e.printStackTrace();
         }
     }
-
-    private ArrayList<Contact> loadContacts() {
-        ArrayList<Contact> contacts;
-            File file = new File(getContext().getFilesDir(), "Profile_Internal.json");
-        if (file.exists()) {
-            // Load from internal storage
-            contacts = loadContactsFromInternalStorage();
-        } else {
-            // Load from assets
-            contacts = loadContactsFromAssets();
-        }
-        return contacts;
-    }
-
     private ArrayList<Contact> loadContactsFromInternalStorage() {
         ArrayList<Contact> contacts = new ArrayList<>();
         try {
@@ -365,5 +320,87 @@ public class PhoneBook extends Fragment {
             Log.e("PhoneBook", "Error parsing QR Data", e);
             Toast.makeText(getActivity(), "Error adding contact from QR code", Toast.LENGTH_SHORT).show();
         }
+        sortContacts();
+        adapter.notifyDataSetChanged();
+    }
+
+    private void makePhoneCall(String number) {
+        try {
+            if (number.trim().length() > 0) {
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                } else {
+                    String dial = "tel:" + number;
+                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+                }
+            } else {
+                Toast.makeText(getActivity(), "Enter Phone Number", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CALL) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 권한 허용
+            } else {
+                Toast.makeText(getActivity(), "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    Comparator<Contact> contactNameComparator = new Comparator<Contact>() {
+        @Override
+        public int compare(Contact c1, Contact c2) {
+            return c1.getName().compareToIgnoreCase(c2.getName());
+        }
+    };
+    private ArrayList<Contact> loadContacts() {
+        ArrayList<Contact> contacts = new ArrayList<>();
+        File file = new File(getContext().getFilesDir(), "Profile_Internal.json");
+        if (file.exists()) {
+            // internal storage에서 가져옴(2회차 이후 실행)
+            contacts = loadContactsFromInternalStorage();
+        } else {
+            // Asset에서 가져옴(최초 실행)
+            contacts = loadContactsFromAssets();
+        }
+
+        Collections.sort(contacts, new Comparator<Contact>() {
+            @Override
+            public int compare(Contact c1, Contact c2) {
+                return c1.getName().compareToIgnoreCase(c2.getName());
+            }
+        });
+        return contacts;
+    }
+    private void updateContacts() {
+        Collections.sort(contactList, contactNameComparator);
+        adapter.notifyDataSetChanged();
+    }
+    private void filterContacts(String text) {
+        ArrayList<Contact> filteredList = new ArrayList<>();
+
+        for (Contact contact : originalContactList) {
+            if (contact.getName().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(contact);
+            }
+        }
+
+        Collections.sort(filteredList, contactNameComparator); // Sort the filtered list
+
+        adapter.clear();
+        adapter.addAll(filteredList);
+        adapter.notifyDataSetChanged();
+    }
+    private void sortContacts() {
+        Collections.sort(contactList, new Comparator<Contact>() {
+            @Override
+            public int compare(Contact c1, Contact c2) {
+                return c1.getName().compareToIgnoreCase(c2.getName());
+            }
+        });
     }
 }
