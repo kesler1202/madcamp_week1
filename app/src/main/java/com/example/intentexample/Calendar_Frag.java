@@ -32,7 +32,6 @@
     import org.json.JSONArray;
     import org.json.JSONException;
 
-
     public class Calendar_Frag extends Fragment {
 
         private MaterialCalendarView materialCalendarView;
@@ -52,7 +51,7 @@
 
             sharedPreferences = getActivity().getSharedPreferences("CalendarPlans", Context.MODE_PRIVATE);
 
-            // Set the first day of the week
+            // 한 주의 시작은 월요일로
             Calendar today = Calendar.getInstance();
             materialCalendarView.setSelectedDate(today);
             materialCalendarView.state().edit()
@@ -74,7 +73,7 @@
                         savePlanToSharedPreferences(selectedDate, planText);
                         updateScrollViewForDate(selectedDate);
                         updateCalendarWithEvents(false);
-                        editTextSchedule.setText(""); // Clear the input box
+                        editTextSchedule.setText("");
                     }
                 }
             });
@@ -154,11 +153,10 @@
             TextView planView = new TextView(getActivity());
             planView.setText(planText);
 
-            // Define your desired padding, text size, and margin
-            int padding = getResources().getDimensionPixelSize(R.dimen.plan_padding); // Define this in dimens.xml
-            int textSize = getResources().getDimensionPixelSize(R.dimen.plan_text_size); // Define this in dimens.xml
-            int verticalMargin = getResources().getDimensionPixelSize(R.dimen.vertical_margin); // Set this to 2dp in dimens.xml
-            int extraTopMargin = getResources().getDimensionPixelSize(R.dimen.extra_top_margin); // Set this to 1dp in dimens.xml
+            int padding = getResources().getDimensionPixelSize(R.dimen.plan_padding);
+            int textSize = getResources().getDimensionPixelSize(R.dimen.plan_text_size);
+            int verticalMargin = getResources().getDimensionPixelSize(R.dimen.vertical_margin);
+            int extraTopMargin = getResources().getDimensionPixelSize(R.dimen.extra_top_margin);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -207,8 +205,6 @@
             relativeLayout.addView(planView);
             relativeLayout.addView(deleteButton);
 
-
-            // Set OnClickListener for delete button
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -217,8 +213,6 @@
                     updateCalendarWithEvents(true);
                 }
             });
-
-            // Add horizontal layout to scrollViewLayout
             scrollViewLayout.addView(relativeLayout);
         }
         private void deletePlanFromSharedPreferences(CalendarDay date, String planText) {
